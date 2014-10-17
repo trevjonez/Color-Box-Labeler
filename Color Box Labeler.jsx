@@ -1,5 +1,10 @@
 ﻿var gTextMargin = 10; //Margin between the bottom of the color block and the label
 var PrecisionLength = 2; // How many decimal points on color channel values
+var textSize = 4;
+
+
+checkSelected();
+writeLabels();
 
 //Validate the selections to ensure they meet labeling criteria
 function checkSelected() {
@@ -50,7 +55,14 @@ function checkSelected() {
 // Loop over selected items and put a colorText label on them
 function writeLabels() {
     var selectedObjects = app.activeDocument.selection;
+    if(app.activeDocument.characterStyles.getByName("Label")){
+        var charStyle = app.activeDocument.characterStyles.getByName("Label");
+    } else {
+        var charStyle = pp.activeDocument.characterStyles.add("Label");
+    }
+    var charAtter = charStyle.characterAttributes;
     
+            
     for( var obj in selectedObjects ) {
             var x_chord = selectedObjects[obj].position[0];
             var y_chord = selectedObjects[obj].position[1] - selectedObjects[obj].height - gTextMargin;
@@ -58,17 +70,23 @@ function writeLabels() {
             var colorText = app.activeDocument.textFrames.add(); //create the colorText label and make it look right
             colorText.position = [x_chord , y_chord]; 
             colorText.contents = getColorText(selectedObjects[obj] , obj);
+            var bounds = selectedObjects[obj].geometricBounds;
+            $.write(bounds + "\n");
+            var width = bounds[2]-bounds[0];
+            width = Math.abs(width);
+            textSize = width * (4 / 78);
+            charAtter.size = textSize;
+            charStyle.applyTo(colorText.textRange);
                
     } 
 }
 
-// Lookup and print the color label depending on the fill color type
+// Lookup and return the color label depending on the fill color type
 function getColorText(currentObj, count) {
     
     count++; // Shift the count up by one so that its more readable
     var resultText = count.toString() + ": ";
     
-    //Big ass else if chain for a few different color type modes
     if(currentObj.fillColor.typename == "SpotColor"){
         
         resultText += currentObj.fillColor.spot.toString() + " α[";
@@ -109,7 +127,7 @@ function getColorText(currentObj, count) {
         
         resultText += "No Color";
         
-    }   else if(currentObj.fillColor.typename == "GrayColor"){
+    }   else if(currentObj.fillColor.typename == "PatternColor"){
         
         resultText += "Pattern fill not supported";
         
@@ -120,7 +138,3 @@ function getColorText(currentObj, count) {
 
 
 
-
-checkSelected();
-
-writeLabels();
