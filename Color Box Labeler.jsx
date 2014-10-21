@@ -82,6 +82,8 @@ function writeLabels() {
             charStyle.applyTo(colorText.textRange);
     } 
 
+    app.activeDocument.characterStyles.removeAll();
+
 }
 
 // Lookup and return the color label depending on the fill color type
