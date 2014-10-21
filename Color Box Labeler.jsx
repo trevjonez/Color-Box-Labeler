@@ -55,13 +55,14 @@ function checkSelected() {
 // Loop over selected items and put a colorText label on them
 function writeLabels() {
     var selectedObjects = app.activeDocument.selection;
-    if(app.activeDocument.characterStyles.getByName("Label")){
+
+    try{
         var charStyle = app.activeDocument.characterStyles.getByName("Label");
-    } else {
-        var charStyle = pp.activeDocument.characterStyles.add("Label");
+    } catch(err) {
+        var charStyle = app.activeDocument.characterStyles.add("Label");
     }
     var charAtter = charStyle.characterAttributes;
-    
+    charAtter.size = 120;
             
     for( var obj in selectedObjects ) {
             var x_chord = selectedObjects[obj].position[0];
@@ -75,10 +76,12 @@ function writeLabels() {
             var width = bounds[2]-bounds[0];
             width = Math.abs(width);
             textSize = width * (4 / 78);
-            charAtter.size = textSize;
+            if(textSize < charAtter.size){
+                charAtter.size = textSize;
+            }            
             charStyle.applyTo(colorText.textRange);
-               
     } 
+
 }
 
 // Lookup and return the color label depending on the fill color type
