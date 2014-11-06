@@ -72,7 +72,7 @@ function writeLabels() {
             colorText.position = [x_chord , y_chord]; 
             colorText.contents = getColorText(selectedObjects[obj] , obj);
             var bounds = selectedObjects[obj].geometricBounds;
-            $.write(bounds + "\n");
+            //$.write(bounds + "\n");
             var width = bounds[2]-bounds[0];
             width = Math.abs(width);
             textSize = width * (4 / 78);
